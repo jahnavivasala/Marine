@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07141c">
+  <meta name="description" content="Marine Sentinel: privacy-preserving maritime pollution investigation prototype. Detect, backtrace, correlate, assess and package evidence locally in your browser.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%2307141c%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-size=%2713%27 font-family=%27monospace%27 fill=%27%236ee7e0%27 text-anchor=%27middle%27%3EMS%3C/text%3E%3C/svg%3E">
+  <title>Marine Sentinel | Maritime Pollution Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<noscript><p style="padding:20px;color:#edf4f5">Marine Sentinel needs JavaScript enabled to run.</p></noscript>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">MS</div>
+      <div><strong>MARINE SENTINEL</strong><span>MARITIME POLLUTION INTELLIGENCE</span></div>
+    </div>
+    <div class="top-status"><i></i> LOCAL ANALYSIS MODE <b id="clock">--:--:--</b></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">INVESTIGATION WORKSPACE / 01</div>
+        <h1>From satellite signal<br><em>to evidence trail.</em></h1>
+        <p>Analyse a locally supplied scene, reconstruct a probable drift path, correlate vessel movement and map environmental exposure without sending the source image to a cloud service.</p>
+      </div>
+      <div class="hero-card">
+        <span>CASE STATUS</span><strong id="caseStatus" aria-live="polite">READY FOR ANALYSIS</strong>
+        <small id="caseMeta">Demo case · awaiting scene</small>
+      </div>
+    </section>
+
+    <section class="command-grid">
+      <aside class="panel upload-panel">
+        <div class="panel-head"><span>01 / SOURCE</span><span class="live-dot">LOCAL</span></div>
+        <div class="dropzone" id="dropzone" title="Click or drop an image">
+          <input id="fileInput" type="file" accept="image/*">
+          <div class="upload-icon">＋</div>
+          <h3>Drop satellite image</h3>
+          <p>JPG, PNG or WebP · processed in this browser</p>
+          <button type="button" class="btn secondary" id="chooseBtn">Choose image</button>
+          <button type="button" class="text-btn" id="demoBtn">Load demonstration scene</button>
+        </div>
+        <div class="fingerprint"><span>IMAGE FINGERPRINT</span><code id="hash">Waiting for source…</code></div>
+      </aside>
+
+      <section class="panel preview-panel">
+        <div class="panel-head"><span>02 / DETECTION</span><span id="confidenceBadge">NO SIGNAL</span></div>
+        <div class="scene" id="scene">
+          <div class="scene-placeholder"><div class="radar"></div><span>Source imagery will appear here</span></div>
+          <canvas id="sceneCanvas"></canvas>
+          <div class="scene-overlay" id="sceneOverlay" hidden>
+            <span class="tag">SUSPECTED POLLUTION</span>
+            <span class="tag muted">MODEL ESTIMATE</span>
+          </div>
+        </div>
+        <div class="metrics">
+          <div><span>DETECTION</span><strong id="detScore">—</strong></div>
+          <div><span>EST. AREA</span><strong id="areaScore">—</strong></div>
+          <div><span>SOURCE WINDOW</span><strong id="timeScore">—</strong></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="workflow">
+      <div class="workflow-head">
+        <div><div class="eyebrow">03 / INVESTIGATION CHAIN</div><h2>One event. Multiple evidence layers.</h2></div>
+        <button type="button" class="btn primary" id="analyseBtn">Run analysis <span>↗</span></button>
+      </div>
+      <div class="steps">
+        <article class="step active"><b>01</b><strong>Detect</strong><span>Surface anomaly</span></article>
+        <article class="step"><b>02</b><strong>Backtrace</strong><span>Drift corridor</span></article>
+        <article class="step"><b>03</b><strong>Correlate</strong><span>AIS consistency</span></article>
+        <article class="step"><b>04</b><strong>Assess</strong><span>GIS exposure</span></article>
+        <article class="step"><b>05</b><strong>Package</strong><span>Evidence ledger</span></article>
+      </div>
+    </section>
+
+    <section class="analysis-grid">
+      <article class="panel drift">
+        <div class="panel-head"><span>DRIFT & ORIGIN</span><span class="chip">ESTIMATE</span></div>
+        <div class="map">
+          <svg viewBox="0 0 700 330" role="img" aria-label="Stylised drift map">
+            <defs><pattern id="grid" width="35" height="35" patternUnits="userSpaceOnUse"><path d="M35 0H0V35" fill="none" stroke="currentColor" stroke-opacity=".09"/></pattern></defs>
+            <rect width="700" height="330" fill="url(#grid)"/>
+            <path class="coast" d="M0 85 C120 45 170 105 260 70 S410 40 510 88 S610 100 700 55 L700 0H0Z"/>
+            <path class="route" d="M560 265 C505 225 490 190 425 173 S320 138 255 105"/>
+            <circle class="origin" cx="255" cy="105" r="9"/>
+            <circle class="spill" cx="560" cy="265" r="12"/>
+            <text x="240" y="84">EST. ORIGIN</text><text x="515" y="292">DETECTED AREA</text>
+            <path class="arrow" d="M335 145 l14 -2 -5 13"/>
+            <path class="arrow" d="M430 205 l14 -2 -5 13"/>
+          </svg>
+          <div class="map-legend"><span><i class="dot origin-dot"></i> origin corridor</span><span><i class="dot spill-dot"></i> detected plume</span><span>↑ estimated drift</span></div>
+        </div>
+        <div class="insight"><span>TRACEABILITY NOTE</span><p>The corridor is a model estimate derived from the demonstration current field. It is an investigative lead, not a measured source location.</p></div>
+      </article>
+
+      <article class="panel vessels">
+        <div class="panel-head"><span>VESSEL CORRELATION</span><span class="chip amber">AIS SAMPLE</span></div>
+        <div class="correlation-summary"><strong id="candidateCount">3</strong><span>candidate tracks requiring analyst review</span></div>
+        <div id="vesselList" class="vessel-list"></div>
+        <div class="warning">⚠ Correlation ≠ attribution. AIS gaps, spoofing, environmental uncertainty and unrelated traffic can affect the result.</div>
+      </article>
+    </section>
+
+    <section class="analysis-grid lower">
+      <article class="panel impact">
+        <div class="panel-head"><span>GIS IMPACT ASSESSMENT</span><span class="chip teal">SPATIAL OVERLAY</span></div>
+        <div class="impact-map">
+          <div class="sea-grid"></div>
+          <div class="zone protected">PROTECTED<br>ZONE</div>
+          <div class="zone fishing">FISHING<br>AREA</div>
+          <div class="zone coast-zone">COASTLINE</div>
+          <div class="plume"></div>
+          <div class="impact-label">EST. EXPOSURE</div>
+        </div>
+        <div class="impact-stats">
+          <div><span>PROTECTED ZONES</span><strong>02</strong></div>
+          <div><span>FISHING AREAS</span><strong>03</strong></div>
+          <div><span>COASTAL SEGMENTS</span><strong>04</strong></div>
+        </div>
+      </article>
+
+      <article class="panel evidence">
+        <div class="panel-head"><span>EVIDENCE LEDGER</span><span class="chip">AUDIT VIEW</span></div>
+        <div id="ledger" class="ledger"></div>
+        <div class="report-actions">
+          <button type="button" class="btn secondary" id="printBtn">Print dossier</button>
+          <button type="button" class="btn primary" id="reportBtn">Generate report ↗</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel methodology">
+      <div class="panel-head"><span>MODEL TRANSPARENCY</span><span>WHY THIS RESULT?</span></div>
+      <div class="factor-grid">
+        <div><b>01</b><strong>Spectral / visual anomaly</strong><p>Candidate surface region is identified from the supplied image. Demo mode uses a deterministic overlay.</p></div>
+        <div><b>02</b><strong>Temporal consistency</strong><p>Event time is treated as an uncertainty window rather than a single unquestionable timestamp.</p></div>
+        <div><b>03</b><strong>Trajectory consistency</strong><p>Vessel tracks are compared with the estimated source corridor and event window.</p></div>
+        <div><b>04</b><strong>Spatial exposure</strong><p>Geographic layers are used to highlight areas that may warrant inspection or protection.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>MARINE SENTINEL / ACADEMIC PROTOTYPE</span><span>Candidate correlations require human verification.</span></footer>
+</div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
