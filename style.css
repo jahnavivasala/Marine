@@ -27,3 +27,6 @@
   .app{max-width:none;padding:0}
   .hero h1,.hero h1 em,.workflow h2{color:#111}
 }
+
+.params{margin-top:16px}.param-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;padding:16px 18px}.param-grid label{font:9px "DM Mono";color:var(--muted);letter-spacing:.08em;display:grid;gap:6px}.param-grid input{background:#0a161d;border:1px solid var(--line);color:var(--text);padding:9px;font:12px "DM Mono";width:100%}.report-actions{flex-wrap:wrap}@media(max-width:700px){.param-grid{grid-template-columns:1fr 1fr}}
+.preset-row{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 16px}.ais-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line)}.ais-tools .text-btn{margin:0}.zone.hit{background:#ff7b7222;box-shadow:0 0 0 1px var(--red)}.btn:focus-visible,.dropzone:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}.param-grid{grid-template-columns:repeat(4,1fr)}
