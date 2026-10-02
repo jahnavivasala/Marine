@@ -84,16 +84,16 @@
 
     <section class="panel params"><div class="panel-head"><span>SCENARIO PARAMETERS</span><span class="chip amber">EDITABLE · RE-RUNS DRIFT + AIS</span></div>
       <div class="param-grid">
-        <label>Resolution (m/px)<input type="number" data-p="res" min="5" step="5"></label>
+        <label>Resolution (m/px of source)<input type="number" data-p="res" min="1" max="1000" step="1"></label>
         <label>Spill age (h)<input type="number" data-p="age" min="0.5" max="8" step="0.5"></label>
-        <label>Wind (m/s)<input type="number" data-p="wind" min="0" step="1"></label>
+        <label>Wind (m/s)<input type="number" data-p="wind" min="0" max="60" step="1"></label>
         <label>Wind from (°)<input type="number" data-p="windDir" min="0" max="360" step="10"></label>
-        <label>Current (m/s)<input type="number" data-p="cur" min="0" step="0.1"></label>
+        <label>Current (m/s)<input type="number" data-p="cur" min="0" max="5" step="0.1"></label>
         <label>Current to (°)<input type="number" data-p="curDir" min="0" max="360" step="10"></label>
         <label>Detect sensitivity<input type="number" data-p="sens" min="0.4" max="2.5" step="0.1"></label>
-        <label>Scene centre lat<input type="number" data-p="lat" step="0.1"></label>
-        <label>Scene centre lon<input type="number" data-p="lon" step="0.1"></label>
-        <label>Capture time (UTC)<input type="text" id="acq" value="2026-10-01T21:10:00Z"></label>
+        <label>Scene centre lat<input type="number" data-p="lat" min="-90" max="90" step="0.1"></label>
+        <label>Scene centre lon<input type="number" data-p="lon" min="-180" max="180" step="0.1"></label>
+        <label class="wide">Capture time (UTC)<input type="text" id="acq" value="2026-10-01T21:10:00Z" placeholder="YYYY-MM-DDTHH:MM:SSZ" spellcheck="false" autocomplete="off"></label>
       </div>
       <div class="preset-row" id="presets"></div></section>
 
@@ -108,7 +108,7 @@
             <path class="route" d="M560 265 C505 225 490 190 425 173 S320 138 255 105"/>
             <circle class="origin" cx="255" cy="105" r="9"/>
             <circle class="spill" cx="560" cy="265" r="12"/>
-            <g id="dyn"></g><text x="240" y="84">EST. ORIGIN</text><text x="515" y="292">DETECTED AREA</text>
+            <g id="dyn"></g><text id="originLbl" x="240" y="84">EST. ORIGIN</text><text id="spillLbl" x="515" y="292">DETECTED AREA</text>
             <path class="arrow" d="M335 145 l14 -2 -5 13"/>
             <path class="arrow" d="M430 205 l14 -2 -5 13"/>
           </svg>
@@ -119,7 +119,7 @@
 
       <article class="panel vessels">
         <div class="panel-head"><span>VESSEL CORRELATION</span><span class="chip amber" id="aisChip">AIS SAMPLE</span></div>
-        <div class="correlation-summary"><strong id="candidateCount">3</strong><span>candidate tracks requiring analyst review</span></div>
+        <div class="correlation-summary"><strong id="candidateCount">—</strong><span>candidate tracks requiring analyst review</span></div>
         <div class="ais-tools"><button type="button" class="btn secondary" id="aisBtn">Upload AIS CSV</button><input id="aisFile" type="file" accept=".csv,text/csv" hidden><button type="button" class="text-btn" id="aisTpl">Download template</button><button type="button" class="text-btn" id="aisReset">Use sample</button></div>
         <div id="vesselList" class="vessel-list"></div>
         <div class="warning">⚠ Correlation ≠ attribution. AIS gaps, spoofing, environmental uncertainty and unrelated traffic can affect the result.</div>
@@ -129,7 +129,7 @@
     <section class="analysis-grid lower">
       <article class="panel impact">
         <div class="panel-head"><span>GIS IMPACT ASSESSMENT</span><span class="chip teal">SPATIAL OVERLAY</span></div>
-        <div class="impact-map">
+        <div class="impact-map" role="img" aria-label="Schematic exposure map">
           <div class="sea-grid"></div>
           <div class="zone protected">PROTECTED<br>ZONE</div>
           <div class="zone fishing">FISHING<br>AREA</div>
@@ -139,9 +139,9 @@
         </div>
         <div id="exposeList" style="padding:0 18px 12px"></div>
         <div class="impact-stats">
-          <div><span>PROTECTED ZONES</span><strong>02</strong></div>
-          <div><span>FISHING AREAS</span><strong>03</strong></div>
-          <div><span>COASTAL SEGMENTS</span><strong>04</strong></div>
+          <div><span>PROTECTED REACHED</span><strong id="statProtected">—</strong></div>
+          <div><span>FISHING REACHED</span><strong id="statFishing">—</strong></div>
+          <div><span>COAST REACHED</span><strong id="statCoast">—</strong></div>
         </div>
       </article>
 
@@ -157,6 +157,12 @@
       </article>
     </section>
 
+    <section class="analysis-grid lower" id="advancedPanels">
+      <article class="panel"><div class="panel-head"><span>SCENARIO COMPARISON</span><span class="chip amber">MODELLED · NOT FORECAST</span></div><p class="vessel-meta" style="padding:0 18px">Sensitivity cases vary supplied wind/current assumptions; these are not independent oceanographic forecasts.</p><div id="scenarioList" class="ledger">Run analysis to compare scenarios.</div></article>
+      <article class="panel"><div class="panel-head"><span>ANALYST REVIEW</span><span class="chip">HUMAN OVERSIGHT</span></div><div style="padding:16px 18px;display:grid;gap:10px"><label>Investigation status<select id="reviewStatus"><option>New observation</option><option>Pending review</option><option>Under investigation</option><option>Evidence insufficient</option><option>Analyst verified</option><option>Closed</option></select></label><label>Review notes<textarea id="reviewNotes" rows="3" maxlength="2000" placeholder="Record checks, limitations, and next action..."></textarea></label><button type="button" class="btn secondary" id="saveReview">Record review update</button><div id="reviewLog" class="ledger">No review updates recorded.</div></div></article>
+    </section>
+    <section class="panel" style="margin-top:16px"><div class="panel-head"><span>INVESTIGATION QUALITY</span><span class="chip teal">COMPLETENESS CHECK</span></div><div id="qualityList" class="factor-grid">Run analysis to assess available evidence.</div></section>
+    <section class="panel" style="margin-top:16px"><div class="panel-head"><span>EVENT TIMELINE</span><span class="chip">SESSION RECORD</span></div><div id="eventTimeline" class="ledger">Timeline entries appear as actions are performed.</div></section>
     <section class="panel methodology">
       <div class="panel-head"><span>MODEL TRANSPARENCY</span><span>WHY THIS RESULT?</span></div>
       <div class="factor-grid">
@@ -175,4 +181,3 @@
 <script src="app.js"></script>
 </body>
 </html>
-
