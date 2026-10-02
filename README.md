@@ -87,3 +87,17 @@ Real AIS CSV upload (name,mmsi,type,time_utc,lat,lon): positions are georeferenc
 Scenario presets, detection-sensitivity control, exposed GIS zones highlighted, keyboard-accessible upload, SIH26143 badge.
 Input validation (v5): colour/false-colour products such as InSAR interferograms are rejected as unsuitable; no-data/radar-shadow black regions and water-body-sized dark areas are no longer reported as slicks. Confidence capped at 88% (heuristic).
 Real-SAR tuning (v6): tested on a real greyscale SAR scene with land, ships and several slicks. Land is masked out of the background estimate, speckle is smoothed, up to 8 slicks are mapped (area = total), and dark patches touching land are labelled coastal look-alikes and ranked lower.
+v7 final review
+Fixed
+Demo scene now works when index.html is opened by double-click (file://); previously the canvas was blocked and "Run analysis" crashed. A built-in fallback scene is used if the SVG cannot be read.
+Letterbox bars (image aspect ratio ≠ 2:1) and thin frame-edge artefacts are no longer reported as slicks.
+Resolution (m/px) now refers to the source image; area, drift and AIS geometry are corrected when the image is rescaled to fit the canvas.
+"Detect sensitivity" was inverted (higher = fewer detections); higher now means more sensitive (default unchanged).
+Stale results are cleared when a new image is loaded or detection fails; JSON/PNG export is refused unless a valid result exists.
+Fingerprint can no longer belong to a different file than the one shown; rapid source switching is safe.
+Inputs are validated and clamped; the capture time must be a valid UTC timestamp; presets no longer leak settings into each other.
+AIS CSV: BOM, quoted names, blank lat/lon (no longer read as 0), zone-less timestamps (treated as UTC), all dark periods kept, 5 MB limit.
+File names and vessel names are HTML-escaped (they were injected raw).
+Dossier/JSON now state the real AIS source, case ID (uploads are no longer labelled MS-DEMO-014), capture/release time, and sample-zone caveat.
+UI: toasts instead of alert(), drift-map labels follow the markers, impact counters show reached/total, mobile parameter grid, hash wrapping, monospace fallback, print stylesheet, keyboard behaviour of the drop zone.
+Tests — node tests/engine.test.js (no dependencies) covers detection, drift direction/units, AIS interpolation and scoring, exposure, and CSV parsing.
