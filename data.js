@@ -1,7 +1,6 @@
 const DEMO_DATA = {
   caseId: "MS-DEMO-014",
   sceneName: "Arabian Sea / Demonstration Scene",
-  detection: { confidence: 94, area: "12.6 km²", window: "18:20–21:10 UTC" },
   params: { sens: 1, lat: 15.5, lon: 68, res: 40, age: 3.5, wind: 6, windDir: 300, cur: 0.4, curDir: 120 },
   presets: {
     "Fresh spill (2 h)": { age: 2, wind: 5, cur: 0.3 },
